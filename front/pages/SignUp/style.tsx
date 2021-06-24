@@ -15,6 +15,8 @@ export const Form = styled.form`
   margin: 0 auto;
   width: 400px;
   max-width: 400px;
+//  & {Label} { ... }  Form의 자식으로 Label이 있으면 적용되는 css 이게 되게 하려고 하면 npm i @emotion/babel-plugin 을 해야한다.
+  
 `;
 
 export const Label = styled.label`
