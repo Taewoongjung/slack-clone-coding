@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {VFC, useCallback, useState} from 'react';
 import useSWR from "swr";
 import fetcher from "@utils/fetcher";
 import axios from "axios";
@@ -10,7 +10,7 @@ import {
     Header, LogOutButton,
     MenuScroll,
     ProfileImg, ProfileModal,
-    RightMenu, WorkspaceButton,
+    RightMenu, WorkspaceButton, WorkspaceModal,
     WorkspaceName,
     Workspaces,
     WorkspaceWrapper
@@ -24,13 +24,16 @@ import {Button, Input, Label} from "@pages/style";
 import useInput from "@hooks/useInput";
 import Modal from "@components/Modal";
 import { toast } from 'react-toastify';
+import CreateChannelModal from "@components/CreateChannelModal";
 
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 const Channel = loadable(() => import('@pages/Channel'));
 
-const Workspace: FC = ({children}) => {
+const Workspace: VFC = () => {
     const [showUserMenu, setShowUserMenu] = useState(false);
-    const [showCreateWorkSpaceModal, setShowCreateWorkSpaceModal] = useState(false);
+    const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
+    const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
+    const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
     const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
     const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
 
@@ -60,7 +63,7 @@ const Workspace: FC = ({children}) => {
     }, []);
 
     const onClickCreateWorkspace = useCallback(() => {
-        setShowCreateWorkSpaceModal(true);
+        setShowCreateWorkspaceModal(true);
     }, []);
 
     const onCreateWorkspace = useCallback((e) => {
@@ -73,7 +76,7 @@ const Workspace: FC = ({children}) => {
         })
             .then(() => {
                 revalidate();
-                setShowCreateWorkSpaceModal(false);
+                setShowCreateWorkspaceModal(false);
                 setNewWorkspace('');
                 setNewUrl('');
             })
@@ -85,8 +88,18 @@ const Workspace: FC = ({children}) => {
         [newWorkspace, newUrl]
     );
 
+    const toggleWorkspaceModal = useCallback(() => {
+        setShowWorkspaceModal((prev) => !prev);
+    }, []);
+
+    const onClickAddChannel = useCallback(() => {
+        setShowCreateChannelModal(true);
+    }, [])
+
+
     const onCloseModal = useCallback(() => {
-        setShowCreateWorkSpaceModal(false);
+        setShowCreateWorkspaceModal(false);
+        setShowCreateChannelModal(false);
     }, []);
 
     if (!userData) {
@@ -126,8 +139,15 @@ const Workspace: FC = ({children}) => {
                     <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
                 </Workspaces>
                 <Channels>
-                    <WorkspaceName>Sleact</WorkspaceName>
-                    <MenuScroll>menu scroll</MenuScroll>
+                    <WorkspaceName onClick={toggleWorkspaceModal}>Sleact</WorkspaceName>
+                    <MenuScroll>
+                        <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
+                            <WorkspaceModal>
+                                <button onClick={onClickAddChannel}>채널 만들기</button>
+                                <button onClick={onLogout}>로그아웃</button>
+                            </WorkspaceModal>
+                        </Menu>
+                    </MenuScroll>
                 </Channels>
                 <Chats>
                     <Switch>
@@ -136,7 +156,7 @@ const Workspace: FC = ({children}) => {
                     </Switch>
                 </Chats>
             </WorkspaceWrapper>
-            <Modal show={showCreateWorkSpaceModal} onCloseModal={onCloseModal}>
+            <Modal show={showCreateWorkspaceModal} onCloseModal={onCloseModal}>
                 <form onSubmit={onCreateWorkspace}>
                     <Label id="workspace-label">
                         <span>워크스페이스 이름</span>
@@ -149,6 +169,11 @@ const Workspace: FC = ({children}) => {
                     <Button type="submit">생성하기</Button>
                 </form>
             </Modal>
+            <CreateChannelModal
+                show={showCreateChannelModal}
+                onCloseModal={onCloseModal}
+                setShowCreateChannelModal={setShowCreateChannelModal}
+            />
         </div>
     );
 };
