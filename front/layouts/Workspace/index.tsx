@@ -16,10 +16,10 @@ import {
     WorkspaceWrapper
 } from "@layouts/Workspace/style";
 import gravatar from 'gravatar';
-import {Switch} from "react-router";
+import {Switch, useParams} from "react-router";
 import loadable from "@loadable/component";
 import Menu from '@components/Menu';
-import {IUser} from "@typings/db";
+import {IChannel, IUser} from "@typings/db";
 import {Button, Input, Label} from "@pages/style";
 import useInput from "@hooks/useInput";
 import Modal from "@components/Modal";
@@ -37,12 +37,17 @@ const Workspace: VFC = () => {
     const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
     const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
 
+    const { workspace } = useParams<{ workspace: string }>();
     const {data: userData, error, revalidate} = useSWR<IUser | false>(
         'http://localhost:3095/api/users',
         fetcher,
         {
             dedupingInterval: 2000, // 2초
         });
+    const { data: channelData } = useSWR<IChannel[]>(
+        userData ?`http://localhost:3095/api/workspaces/${workspace}/channels` : null,   // 내가 로그인 한 상태에만 채널 가져오게 하고 만약에 로그인 하지 않았으면 null로 가는 로직이다.
+        fetcher
+    ); // 채널 데이터 서버로부터 받아오기
 
     const onLogout = useCallback(() => {
         axios.post('http://localhost:3095/api/users/logout', null, {
