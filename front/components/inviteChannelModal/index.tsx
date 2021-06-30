@@ -30,11 +30,11 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
                 return;
             }
             axios
-                .post(`/api/workspaces/${workspace}/channels/${channel}/members`, {
+                .post(`/api/workspaces/${workspace}/channels/${channel}/members`, {  // 멤버가 추가되면 추가된 멤버를 가져오기위해
                     email: newMember,
                 })
                 .then(() => {
-                    revalidateMembers();
+                    revalidateMembers();  // 요청을 다시 보낸다
                     setShowInviteChannelModal(false);
                     setNewMember('');
                 })

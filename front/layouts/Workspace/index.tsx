@@ -199,7 +199,7 @@ const Workspace: VFC = () => {
             <InviteChannelModal
                 show={showInviteChannelModal}
                 onCloseModal={onCloseModal}
-                setShowCreateChannelModal={setShowInviteChannelModal}
+                setShowInviteChannelModal={setShowInviteChannelModal}
             />
         </div>
     );
