@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {FC, useCallback} from 'react';
 import Modal from "@components/Modal";
 import axios from "axios";
 import {useParams} from "react-router";
@@ -14,7 +14,7 @@ interface Props {
     onCloseModal: () => void;
     setShowInviteWorkspaceModal: (flag: boolean) => void;
 }
-const inviteWorkspaceModal = () => {
+const inviteWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWorkspaceModal }) => {
     const { workspace } = useParams<{ workspace: string; channel: string}>();
     const [ newMember, onChangeNewMemeber, setNewMember ] = useInput('');
     const { data: userData } = useSWR<IUser>('/api/users', fetcher);
