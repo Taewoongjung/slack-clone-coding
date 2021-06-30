@@ -80,7 +80,6 @@ const Workspace: VFC = () => {
             url: newUrl,
         })
             .then(() => {
-                revalidate();
                 setShowCreateWorkspaceModal(false);
                 setNewWorkspace('');
                 setNewUrl('');
@@ -152,6 +151,7 @@ const Workspace: VFC = () => {
                                 <button onClick={onLogout}>로그아웃</button>
                             </WorkspaceModal>
                         </Menu>
+                        {channelData?.map((v)=>(<div>{v.name}</div>))}
                     </MenuScroll>
                 </Channels>
                 <Chats>
