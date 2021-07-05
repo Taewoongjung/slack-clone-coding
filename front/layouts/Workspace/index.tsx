@@ -25,8 +25,10 @@ import useInput from "@hooks/useInput";
 import Modal from "@components/Modal";
 import { toast } from 'react-toastify';
 import CreateChannelModal from "@components/CreateChannelModal";
-import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
-import InviteChannelModal from '@components/InviteChannelModal';
+import InviteWorkspaceModal from '@components/inviteWorkspaceModal';
+
+import DMList from '@components/DMList';
+import InviteChannelModal from '@components/inviteChannelModal';
 
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 const Channel = loadable(() => import('@pages/Channel'));
@@ -65,10 +67,6 @@ const Workspace: VFC = () => {
                 revalidate();
             });
     }, []);
-
-    if (userData === undefined) {
-        return <div>로딩중...</div>
-    }
 
     const onClickUserProfile = useCallback((e) => {
         e.stopPropagation();
@@ -119,6 +117,10 @@ const Workspace: VFC = () => {
 
     }, []);
 
+    if (userData === undefined) {
+        return <div>로딩중...</div>
+    }
+
     if (!userData) {
         return <Redirect to="/login" />
     }
@@ -166,7 +168,7 @@ const Workspace: VFC = () => {
                                 <button onClick={onLogout}>로그아웃</button>
                             </WorkspaceModal>
                         </Menu>
-                        <ChannelList />
+                        {/*<ChannelList />*/}
                         <DMList />
                     </MenuScroll>
                 </Channels>
