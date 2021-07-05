@@ -2,7 +2,7 @@
 import { CollapseButton } from '@components/DMList/style';
 import { IChannel, IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import useSWR from 'swr';
@@ -15,10 +15,27 @@ const ChannelList: FC = () => {
     });
     const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
     const [channelCollapse, setChannelCollapse] = useState(false);
+    const [countList, setCountList] = useState(false);
 
     const toggleChannelCollapse = useCallback(() => {
         setChannelCollapse((prev) => !prev);
     }, []);
+
+    const resetCount = useCallback(
+        (id) => () => {
+            setCountList((list) => {
+                return {
+                    ...list,
+                    [id]: undefined,
+                };
+            });
+        }, []
+    );
+
+    useEffect(() => {
+        console.log('ChannelList: workspace 바꼈다', workspace, location.pathname);
+        setCountList({});
+    }, [workspace, location]);
 
     return (
         <>
@@ -40,6 +57,7 @@ const ChannelList: FC = () => {
                             key={channel.name}
                             activeClassName="selected"
                             to={`/workspace/${workspace}/channel/${channel.name}`}
+                            onClick={resetCount(`c-${channel.id}`)}
                         >
                             <span># {channel.name}</span>
                         </NavLink>
