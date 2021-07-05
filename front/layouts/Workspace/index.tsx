@@ -1,4 +1,4 @@
-import React, {VFC, useCallback, useState} from 'react';
+import React, {VFC, useCallback, useState, useEffect} from 'react';
 import useSWR from "swr";
 import fetcher from "@utils/fetcher";
 import axios from "axios";
@@ -30,6 +30,7 @@ import InviteWorkspaceModal from '@components/inviteWorkspaceModal';
 import DMList from '@components/DMList';
 import InviteChannelModal from '@components/inviteChannelModal';
 import ChannelList from "@components/ChannelList";
+import {disconnect} from "cluster";
 
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 const Channel = loadable(() => import('@pages/Channel'));
@@ -45,7 +46,7 @@ const Workspace: VFC = () => {
     const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
 
     const { workspace } = useParams<{ workspace: string }>();
-    const {data: userData, error, revalidate} = useSWR<IUser | false>(
+    const {data: userData, error, revalidate, mutate} = useSWR<IUser | false>(
         '/api/users',
         fetcher,
         {
@@ -59,13 +60,13 @@ const Workspace: VFC = () => {
         userData ? `/api/workspaces/${workspace}/members` : null,
         fetcher,
     ); // 워크스페이스 멤버 데이터 가져오기
-
+    // const [socket, disconnect] = useSocket(workspace);
     const onLogout = useCallback(() => {
         axios.post('/api/users/logout', null, {
             withCredentials: true,
         })
             .then(() => {
-                revalidate();
+                mutate(false, false);
             });
     }, []);
 
