@@ -1,5 +1,7 @@
 # slack-clone-coding
+<br><hr>
+# 사용 스킬 <br>
 
-사용 스킬
-back-end : node js <br>
-front-end : React
+### back-end : node js 
+### front-end : React
+<hr>
